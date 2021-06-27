@@ -1,0 +1,48 @@
+"C:\Program Files\JetBrains\CLion 2020.3.2\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" C:\Users\Carter\Desktop\单片机Can项目
+-- The C compiler identification is GNU 8.1.0
+-- Check for working C compiler: C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/gcc.exe
+-- Check for working C compiler: C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/gcc.exe - broken
+CMake Error at C:/Program Files/JetBrains/CLion 2020.3.2/bin/cmake/win/share/cmake-3.17/Modules/CMakeTestCCompiler.cmake:60 (message):
+  The C compiler
+
+    "C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin/gcc.exe"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeTmp
+    
+    Run Build Command(s):C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe cmTC_2d691/fast && C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe  -f CMakeFiles\cmTC_2d691.dir\build.make CMakeFiles/cmTC_2d691.dir/build
+    mingw32-make.exe[1]: Entering directory 'C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeTmp'
+    Building C object CMakeFiles/cmTC_2d691.dir/testCCompiler.c.obj
+    C:\PROGRA~2\MINGW-~1\I686-8~1.0-P\mingw32\bin\gcc.exe    -o CMakeFiles\cmTC_2d691.dir\testCCompiler.c.obj   -c C:\Users\Carter\Desktop\閸楁洜澧栭張绡奱n妞ゅ湱娲癨cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c
+    gcc.exe: error: C:\Users\Carter\Desktop\閸楁洜澧栭張绡奱n妞ゅ湱娲癨cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c: No such file or directory
+    gcc.exe: fatal error: no input files
+    compilation terminated.
+    mingw32-make.exe[1]: *** [CMakeFiles\cmTC_2d691.dir\build.make:85: CMakeFiles/cmTC_2d691.dir/testCCompiler.c.obj] Error 1
+    mingw32-make.exe[1]: Leaving directory 'C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeTmp'
+    mingw32-make.exe: *** [Makefile:140: cmTC_2d691/fast] Error 2
+    
+    
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:2 (project)
+
+
+CMake Warning (dev) in CMakeLists.txt:
+  No cmake_minimum_required command is present.  A line of code such as
+
+    cmake_minimum_required(VERSION 3.17)
+
+  should be added at the top of the file.  The version specified may be lower
+  if you wish to support older CMake versions for this project.  For more
+  information run "cmake --help-policy CMP0000".
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeError.log".

@@ -1,0 +1,74 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              06/23/2021 00:26:56 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /** 用 连续读 和 分页写 模式访问 EEPROM，并且依次加 1 加 2 加 3...最后将结果回�
+             -�至原地址，此处省略 Lcd1602.c 和 I2C.c */
+   2          #include <reg52.h>
+   3          
+   4          extern void E2Read(unsigned char *buf, unsigned char addr, unsigned char len);
+   5          extern void E2Write(unsigned char *buf, unsigned char addr, unsigned char len);
+   6          void MemToStr(unsigned char *str, unsigned char *src, unsigned char len);
+   7          
+   8          void main() {
+   9   1        unsigned char i;
+  10   1        unsigned char buf[5];
+  11   1        unsigned char str[20];
+  12   1      
+  13   1        E2Read(buf, 0x8E, sizeof(buf));  // 从 EEPROM 读取一段数据
+  14   1        MemToStr(str, buf, sizeof(buf)); // 转换为十六进制字符串
+  15   1      
+  16   1        /* 数据依次累加 1, 2, 3... */
+  17   1        for (i = 0; i < sizeof(buf); i++) {
+  18   2          buf[i] = buf[i] + 1 + i;
+  19   2        }
+  20   1        E2Write(buf, 0x8E, sizeof(buf)); // 将结果写回 EEPROM
+  21   1        while (1);
+  22   1      }
+  23          
+  24          /* 将一段内存数据转换为十六进制字符串，参数 str 是字符串指针，参数 src 是源
+             -数据地址，参数 len 是数据长度 */
+  25          void MemToStr(unsigned char *str, unsigned char *src, unsigned char len) {
+  26   1        unsigned char tmp;
+  27   1      
+  28   1        while (len--) {
+  29   2          tmp = *src >> 4;           // 取出高 4 位
+  30   2          if (tmp <= 9)              // 转换为 0-9 或 A-F
+  31   2            *str++ = tmp + '0';
+  32   2          else
+  33   2            *str++ = tmp - 10 + 'A';
+  34   2      
+  35   2          tmp = *src & 0x0F;         // 取出低 4 位
+  36   2          if (tmp <= 9)              // 转换为 0-9 或 A-F
+  37   2            *str++ = tmp + '0';
+  38   2          else
+  39   2            *str++ = tmp - 10 + 'A';
+  40   2      
+  41   2          *str++ = ' ';              // 转换完 1 个字节就添加 1 个空格
+  42   2          src++;
+  43   2        }
+  44   1      
+  45   1        *str = '\0';                 // 添加字符串结束符
+  46   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    256    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.0.0   MAIN                                                              06/23/2021 00:26:56 PAGE 2   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      32
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
