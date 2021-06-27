@@ -13,12 +13,11 @@
   </project>
 
   <project>
-    <PathAndName>.\Num_Show\project.uvproj</PathAndName>
-    <NodeIsExpanded>1</NodeIsExpanded>
+    <PathAndName>.\NumShow\NumShow.uvproj</PathAndName>
   </project>
 
   <project>
-    <PathAndName>.\new_project\project.uvproj</PathAndName>
+    <PathAndName>.\I2CROMNumShow\I2CROMNumShow.uvproj</PathAndName>
     <NodeIsActive>1</NodeIsActive>
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>
