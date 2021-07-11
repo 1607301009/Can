@@ -13,16 +13,16 @@ CMake Error at C:/Program Files/JetBrains/CLion 2020.3.2/bin/cmake/win/share/cma
 
     Change Dir: C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeTmp
     
-    Run Build Command(s):C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe cmTC_2d691/fast && C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe  -f CMakeFiles\cmTC_2d691.dir\build.make CMakeFiles/cmTC_2d691.dir/build
+    Run Build Command(s):C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe cmTC_3ab33/fast && C:/PROGRA~2/MINGW-~1/I686-8~1.0-P/mingw32/bin/mingw32-make.exe  -f CMakeFiles\cmTC_3ab33.dir\build.make CMakeFiles/cmTC_3ab33.dir/build
     mingw32-make.exe[1]: Entering directory 'C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeTmp'
-    Building C object CMakeFiles/cmTC_2d691.dir/testCCompiler.c.obj
-    C:\PROGRA~2\MINGW-~1\I686-8~1.0-P\mingw32\bin\gcc.exe    -o CMakeFiles\cmTC_2d691.dir\testCCompiler.c.obj   -c C:\Users\Carter\Desktop\閸楁洜澧栭張绡奱n妞ゅ湱娲癨cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c
+    Building C object CMakeFiles/cmTC_3ab33.dir/testCCompiler.c.obj
+    C:\PROGRA~2\MINGW-~1\I686-8~1.0-P\mingw32\bin\gcc.exe    -o CMakeFiles\cmTC_3ab33.dir\testCCompiler.c.obj   -c C:\Users\Carter\Desktop\閸楁洜澧栭張绡奱n妞ゅ湱娲癨cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c
     gcc.exe: error: C:\Users\Carter\Desktop\閸楁洜澧栭張绡奱n妞ゅ湱娲癨cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c: No such file or directory
     gcc.exe: fatal error: no input files
     compilation terminated.
-    mingw32-make.exe[1]: *** [CMakeFiles\cmTC_2d691.dir\build.make:85: CMakeFiles/cmTC_2d691.dir/testCCompiler.c.obj] Error 1
+    mingw32-make.exe[1]: *** [CMakeFiles\cmTC_3ab33.dir\build.make:85: CMakeFiles/cmTC_3ab33.dir/testCCompiler.c.obj] Error 1
     mingw32-make.exe[1]: Leaving directory 'C:/Users/Carter/Desktop/鍗曠墖鏈篊an椤圭洰/cmake-build-debug/CMakeFiles/CMakeTmp'
-    mingw32-make.exe: *** [Makefile:140: cmTC_2d691/fast] Error 2
+    mingw32-make.exe: *** [Makefile:140: cmTC_3ab33/fast] Error 2
     
     
 

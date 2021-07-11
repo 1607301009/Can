@@ -1,0 +1,6 @@
+"STARTUP.obj",
+"main.obj",
+"MCP2515.obj",
+"UART.obj" 
+TO "NiRenMCP2515" 
+RAMSIZE(256) 

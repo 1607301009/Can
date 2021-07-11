@@ -9,7 +9,6 @@
 
   <project>
     <PathAndName>.\I2C_EEPPROM\I2C_EEPPROM.uvproj</PathAndName>
-    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
   <project>
@@ -18,6 +17,19 @@
 
   <project>
     <PathAndName>.\I2CROMNumShow\I2CROMNumShow.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\MCP2515\MCP2315.uvproj</PathAndName>
+    <NodeIsExpanded>1</NodeIsExpanded>
+  </project>
+
+  <project>
+    <PathAndName>.\UART\UART.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\CAN通信STC89C52RC开发MCP2515稳定版\NiRenMCP2515.uvproj</PathAndName>
     <NodeIsActive>1</NodeIsActive>
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>

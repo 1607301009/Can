@@ -2,21 +2,73 @@
 #include <reg52.h>
 
 extern void E2Read(unsigned char *buf, unsigned char addr, unsigned char len);
+
 extern void E2Write(unsigned char *buf, unsigned char addr, unsigned char len);
+
 void MemToStr(unsigned char *str, unsigned char *src, unsigned char len);
 
+//声明函数
+extern void UART_init(void);
+
+extern void UART_send_buffer(unsigned char *buffer, unsigned int len);
+
 extern void setDisplayNum(unsigned long Num, unsigned long base);
+
 extern void scanDisplayNum();
+
+
+/*******************************************************************************
+* 函数名  : StrAddStr
+* 描述    : 将str2添加到str1后面
+* 输入    : *str：待拼接字符串首地址
+* 输出    : 无
+* 返回值  : 无
+* 说明    : 无
+*******************************************************************************/
+unsigned char *StrAddStr(unsigned char *str1, unsigned char *str2) {
+    unsigned char *pt = str1;
+    while (*str1 != '\0') str1++;
+    while (*str2 != '\0') *str1++ = *str2++;
+    *str1 = '\0';
+    return pt;
+}
+
+/*******************************************************************************
+* 函数名  : NumAddStr
+* 描述    : 将数字添加到字符串后面
+* 输入    : *str：待拼接字符串首地址, num：待拼接数字
+* 输出    : 无
+* 返回值  : 无
+* 说明    : 无
+*******************************************************************************/
+void NumAddStr(unsigned char *str, unsigned char num) {
+    do      //从各位开始变为字符，直到最高位，最后应该反转
+    {
+        *str++ = num % 10 + '0';
+        num = num / 10;
+    } while (num > 0);
+    *str = '\0';                 // 添加字符串结束符
+}
 
 unsigned int cnt = 0;   // 定时器 T0 中断次数
 unsigned char flag = 0; // 定时 1 秒标志
+void delay(unsigned char i) {
+    unsigned char j, k;
+    for (j = i; j > 0; j--)
+        for (k = 90; k > 0; k--);
+}
+
+
+unsigned char Send_data[8]={0x20,0xF1,0x02,0x03,0x04,0x05,0x06,0x07};
+unsigned char init[1]={0x00};
 
 
 void main() {
-  unsigned char i;
-  unsigned char buf[5];
-  unsigned char str[20];
+    unsigned char i, j, k;
+    unsigned char buf[8];
+    unsigned char str[20];
     unsigned long sec = 22; // 消耗的秒数
+    unsigned char NoteID[11] = "Note ID:";
 
     TMOD = 0x01;            // 设置 T0 为模式 1
     TH0 = 0xFC;
@@ -25,7 +77,7 @@ void main() {
     EA = 1;  // 使能总中断
     ET0 = 1; // 使能 T0 中断
     TR0 = 1; // 启动 T0
-
+    UART_init();    //UART1初始化配置
 //    while (1) {
 //        /* 判断 1 秒定时标志 */
 //        if (flag == 1) {
@@ -35,45 +87,62 @@ void main() {
 //            setDisplayNum(sec, 10);
 //        }
 //    }
-  E2Read(buf, 0x8E, sizeof(buf));  // 从 EEPROM 读取一段数据
-  MemToStr(str, buf, sizeof(buf)); // 转换为十六进制字符串
 
-  /* 数据依次累加 1, 2, 3... */
-  for (i = 0; i < sizeof(buf); i++) {
-    buf[i] = buf[i] + 1;
-  }
-  E2Write(buf, 0x8E, sizeof(buf)); // 将结果写回 EEPROM
+    UART_send_buffer(NoteID, sizeof(NoteID)); //发送一个字符
+    //for (k = 0; k < 256; k++) {
+			//E2Write(init, k, 1);
+		//}
+    for (k = 0; k < 256; ) {
+        k += 32;
+        j = k;
+        NumAddStr(NoteID, k);
+        delay(200);
+        UART_send_buffer(NoteID, sizeof(NoteID)); //发送一个字符
 
-    flag = 0; // 定时 1 秒标志清零
-//    sec++;    // 秒计数自增 1
+        E2Read(buf, j, sizeof(buf));  // 从 EEPROM 读取一段数据
+        MemToStr(str, buf, sizeof(buf)); // 转换为十六进制字符串
 
-    setDisplayNum(buf[4], 10);
-
-  while (1);
+//        /* 数据依次累加 1, 2, 3... */
+//        for (i = 0; i < sizeof(Send_data); i++) {
+//            Send_data[i] = j + i;
+//        }
+//
+////    *NoteID += k;
+        delay(200);
+//        flag = 0; // 定时 1 秒标志清零
+//        //sec++;    // 秒计数自增 1
+        UART_send_buffer(str, sizeof(str)); //发送一个字符
+//        setDisplayNum(k, 10);
+////    UART_send_buffer(str, sizeof(buf)); //发送一个字符
+//
+//        E2Write(Send_data, j, sizeof(Send_data)); // 将结果写回 EEPROM
+//        E2Write(buf, j, sizeof(buf)); // 将结果写回 EEPROM
+    }
+    while (1);
 }
 
 /* 将一段内存数据转换为十六进制字符串，参数 str 是字符串指针，参数 src 是源数据地址，参数 len 是数据长度 */
 void MemToStr(unsigned char *str, unsigned char *src, unsigned char len) {
-  unsigned char tmp;
+    unsigned char tmp;
 
-  while (len--) {
-    tmp = *src >> 4;           // 取出高 4 位
-    if (tmp <= 9)              // 转换为 0-9 或 A-F
-      *str++ = tmp + '0';
-    else
-      *str++ = tmp - 10 + 'A';
+    while (len--) {
+        tmp = *src >> 4;           // 取出高 4 位
+        if (tmp <= 9)              // 转换为 0-9 或 A-F
+            *str++ = tmp + '0';
+        else
+            *str++ = tmp - 10 + 'A';
 
-    tmp = *src & 0x0F;         // 取出低 4 位
-    if (tmp <= 9)              // 转换为 0-9 或 A-F
-      *str++ = tmp + '0';
-    else
-      *str++ = tmp - 10 + 'A';
+        tmp = *src & 0x0F;         // 取出低 4 位
+        if (tmp <= 9)              // 转换为 0-9 或 A-F
+            *str++ = tmp + '0';
+        else
+            *str++ = tmp - 10 + 'A';
 
-    *str++ = ' ';              // 转换完 1 个字节就添加 1 个空格
-    src++;
-  }
+        *str++ = ' ';              // 转换完 1 个字节就添加 1 个空格
+        src++;
+    }
 
-  *str = '\0';                 // 添加字符串结束符
+    *str = '\0';                 // 添加字符串结束符
 }
 
 /* 定时器 T0 中断服务函数 */
@@ -91,4 +160,5 @@ flag = 1; // 定时 1 秒标志置 1
 }
 
 scanDisplayNum();
+
 }
