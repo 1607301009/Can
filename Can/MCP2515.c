@@ -256,7 +256,7 @@ void MCP2515_Init(unsigned char *CAN_Bitrate)
 * 输入    : *CAN_TX_Buf(待发送数据缓冲区指针),len(待发送数据长度)
 * 输出    : 无
 * 返回值  : 无
-* 说明    : 无
+* 说明    :
 *******************************************************************************/
 void CAN_Send_buffer(unsigned long int ID,unsigned char EXIDE,unsigned char DLC,unsigned char *Send_data)
 {
