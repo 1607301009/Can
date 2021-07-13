@@ -30,6 +30,10 @@
 
   <project>
     <PathAndName>.\CAN通信STC89C52RC开发MCP2515稳定版\NiRenMCP2515.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>.\Can\Can.uvproj</PathAndName>
     <NodeIsActive>1</NodeIsActive>
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>

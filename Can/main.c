@@ -121,35 +121,136 @@ void MemToStr(unsigned char *str, unsigned char *src, unsigned char len) {
   *str = '\0';                 // 添加字符串结束符
 }
 
-
-unsigned char NoteSend[] = "Send:";
-unsigned char NoteReceive[] = "Receive:";
-unsigned char NoteID[] = " ID:";
-unsigned char NoteData[] = " Data:";
-unsigned char Enter[3] = "\r\n";
-
-void Send(unsigned int ID, unsigned char EXIDE, unsigned char DLC, unsigned char *Send_data) {
-
-//    UART_send_buffer(Enter, sizeof(Enter));
-//
-//    UART_send_buffer(NoteSend, sizeof(NoteSend));
-//    UART_send_buffer(NoteID, sizeof(NoteID));
-//    UART_send_str("F");
-//    UART_send_buffer(Enter, sizeof(Enter));
-//
-//    UART_send_buffer(NoteSend, strlen(NoteSend));
-//    UART_send_buffer(NoteData, sizeof(NoteData));
-    unsigned char str[5];
-    UART_send_buffer(str, 23);
-    UART_send_buffer(Enter, sizeof(Enter));
-    Delay_Nms(1000);
-//    UART_send_buffer(SendIDNote, sizeof(SendIDNote)); //发送一个字符
-
-    //UART_send_buffer(ID, sizeof(ID)); //发送一个字符
-    CAN_Send_buffer(ID, EXIDE, DLC, Send_data);
-//    SendIDNote = NumAddStr(*SendIDNote, ID)
-//    UART_send_buffer(SendIDNote, sizeof(SendIDNote)); //发送一个字符
+/* 将一段内存数据转换为十六进制字符串，参数 str 是字符串指针，参数 src 是源数据地址，参数 len 是数据长度 */
+unsigned char *StrData(unsigned char *src, unsigned char len) {
+    static char str[23];      //必须为static变量，或者是全局变量
+    unsigned char i=0;
+    unsigned char tmp;
+    while (len--) {
+        tmp = *src >> 4;           // 取出高 4 位
+        if (tmp <= 9)              // 转换为 0-9 或 A-F
+            str[i++] = tmp + '0';
+        else
+            str[i++] = tmp - 10 + 'A';
+        tmp = *src & 0x0F;         // 取出低 4 位
+        if (tmp <= 9)              // 转换为 0-9 或 A-F
+            str[i++] = tmp + '0';
+        else
+            str[i++] = tmp - 10 + 'A';
+        str[i++] = ' ';              // 转换完 1 个字节就添加 1 个空格
+        src++;
+    }
+    str[--i] = '\0';                 // 添加字符串结束符
+    return str;
 }
+unsigned char *NumToStr(unsigned int num, unsigned char radix) {
+    static char str[8];      //必须为static变量，或者是全局变量
+
+    unsigned char tmp;
+    unsigned char i = 0;
+    unsigned char j = 0;
+    unsigned char NewStr[8]={0};
+
+    do      //从各位开始变为字符，直到最高位，最后应该反转
+    {
+        tmp =  num % radix;
+        num = num / radix;
+        NewStr[i++] = tmp;
+    } while (num > 0);
+    do      //从各位开始变为字符，直到最高位，最后应该反转
+    {
+        tmp = NewStr[--i];
+        if (tmp <= 9)              // 转换为 0-9 或 A-F
+            str[j++] = tmp + '0';
+        else
+            str[j++] = tmp - 10 + 'A';
+    } while (i > 0);
+    str[j] = '\0';                 // 添加字符串结束符
+    return str;
+}
+
+unsigned char *StrLen(unsigned char *str) {
+    unsigned char i = 0;
+    while (*str++ != '\0') i++;
+    return i;
+}
+//unsigned char SendIDNote[8] = "Send ID:";
+//unsigned char SendDataNote[10] = "Send Data:";
+//unsigned char ReceiveIDNote[11] = "Receive ID:";
+//unsigned char ReceiveDataNote[13] = "Receive Data:";
+
+unsigned char Space[4] = "    ";
+
+unsigned char SendNote[9] = "Send   : ";
+
+unsigned char IsExID[4]     = " EX:";
+unsigned char IDNote[4]     = " ID:";
+unsigned char DLCNote[5]    = " DLC:";
+unsigned char DataNote[6]   = " Data:";
+
+unsigned char ReceiveNote[9] = "Receive: ";
+unsigned char Addr[6]    = " Addr:";
+unsigned char Enter[2]      = "\r\n";
+
+unsigned char *StrID;
+unsigned char *SendData;
+/* 将需要发送的数据 转发到uart */
+void Send(unsigned int ID, unsigned char EXIDE, unsigned char DLC, unsigned char *Send_data) {
+    CAN_Send_buffer(ID,EXIDE,DLC,Send_data);
+
+//    UART_send_buffer(Enter, sizeof(Enter));
+    UART_send_buffer(SendNote, sizeof(SendNote));
+
+    UART_send_buffer(IsExID, sizeof(IsExID));
+    UART_send_buffer(NumToStr(EXIDE, 16), 1);
+
+    UART_send_buffer(IDNote, sizeof(IDNote));
+    StrID = NumToStr(ID, 16);
+    UART_send_buffer(StrID, StrLen(StrID));
+
+    UART_send_buffer(DLCNote, sizeof(DLCNote));
+    UART_send_buffer(NumToStr(DLC, 16), 1);
+
+    UART_send_buffer(DataNote, sizeof(DataNote));
+    SendData = StrData(Send_data, DLC);
+    UART_send_buffer(SendData, StrLen(SendData));
+
+    UART_send_buffer(Enter, sizeof(Enter));
+}
+
+/* 将需要发送的数据 转发到uart */
+void Receive(unsigned char RXB_CTRL_Address,unsigned char *CAN_RX_Buf) {
+    CAN_Receive_Buffer(RXB_CTRL_Address, CAN_RX_Buf);//CAN接收一帧数据
+    UART_send_buffer(ReceiveNote, sizeof(ReceiveNote));
+
+    UART_send_buffer(Addr, sizeof(Addr));
+    StrID = NumToStr(RXB_CTRL_Address, 16);
+    UART_send_buffer(StrID, StrLen(StrID));
+
+    UART_send_buffer(DataNote, sizeof(DataNote));
+    SendData = StrData(CAN_RX_Buf, 8);
+    UART_send_buffer(SendData, StrLen(SendData));
+
+    UART_send_buffer(Enter, sizeof(Enter));
+
+//    ReadCtrl(RXB0CTRL);
+}
+//
+//unsigned char  ReadCtrl(unsigned char RXB0CTRL) {
+//    unsigned char rByte;
+//    rByte = MCP2515_ReadByte(RXB0CTRL);
+//
+//    UART_send_buffer(Addr, sizeof(Addr));
+//    StrID = NumToStr(RXB0CTRL, 16);
+//    UART_send_buffer(StrID, StrLen(StrID));
+//
+//    UART_send_buffer(DataNote, sizeof(DataNote));
+//    SendData = NumToStr(rByte, 16);
+//    UART_send_buffer(SendData, StrLen(SendData));
+//
+//    UART_send_buffer(Enter, sizeof(Enter));
+//    return rByte;
+//}
 
 /*******************************************************************************
 * 函数名  : main
@@ -168,14 +269,11 @@ unsigned char Read_Value[] = {0x0, 0x1, 0x2, 0x3, 0x04, 0x05, 0x06, 0x27};
 
 void main(void) {
     unsigned int j;
-//
     unsigned long int ID = 0x7FD;
     unsigned char EXIDE = 0;
-//	unsigned char DLC=8;
+	unsigned char DLC=8;
     unsigned char Send_data[] = {0x20, 0xF1, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
-//    unsigned char zifuchuan1[] = " aaaB22ss21d";
 
-    //unsigned char rd[] = "\\r\\d";
     UART_init();    //UART1初始化配置
     Exint_Init();            //外部中断1初始化函数
 
@@ -184,34 +282,29 @@ void main(void) {
 
     for (j = 0; j < 2; j++) //发送字符串，直到遇到0才结束
     {
-//        UART_send_buffer(SendIDNote, sizeof(SendIDNote)); //发送一个字符
-        //UART_send_buffer(rd, sizeof(rd)); //发送一个字符
-        Send(ID, EXIDE, sizeof(Send_data), Send_data);
+        Send(ID, EXIDE, DLC, Send_data);
 //        CAN_Send_buffer(ID,EXIDE,DLC,Send_data);
         ID++;
         EXIDE = !EXIDE;
-//        DLC--;
+        DLC--;
         Delay_Nms(1000);
-
-//        CAN_Receive_Buffer(TXB0CTRL, Read_Value);
-//        UART_send_buffer(Read_Value,14); //发送一个字符
-
-//        Delay_Nms(1000);  //移动到下一个字符
     }
 
     Delay_Nms(2000);
-//	ini00[0]=CAN_Flag;
-//	ini00[1]=P3;
+
     while (1) {
 
         if (CAN_RX0IF_Flag == 1)                            //接收缓冲器0 满中断标志位
         {
             CAN_RX0IF_Flag = 0;//CAN接收到数据标志
-            if (MCP2515_ReadByte(MCP2515_ReadByte) & 0x05)//RXB0滚存到了RXB1
-                CAN_Receive_Buffer(RXB1CTRL, RXB_Value);//CAN接收一帧数据
-            else
-                CAN_Receive_Buffer(RXB0CTRL, RXB_Value);//CAN接收一帧数据
-            UART_send_buffer(RXB_Value, 14); //发送一个字符
+					Receive(RXB0CTRL, RXB_Value);//CAN接收一帧数据
+            //if (MCP2515_ReadByte(RXB0CTRL) & 0x05)//RXB0滚存到了RXB1   滚存问题，应该是60h
+//                CAN_Receive_Buffer(RXB1CTRL, RXB_Value);//CAN接收一帧数据
+                //Receive(RXB1CTRL, RXB_Value);//CAN接收一帧数据
+            //else
+//                CAN_Receive_Buffer(RXB0CTRL, RXB_Value);//CAN接收一帧数据
+                //Receive(RXB0CTRL, RXB_Value);//CAN接收一帧数据
+//            UART_send_buffer(RXB_Value, 14); //发送一个字符
             Delay_Nms(2000);  //移动到下一个字符
 //			UART_send_buffer(RXB_Value,14); //发送一个字符
 
