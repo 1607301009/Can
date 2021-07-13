@@ -257,6 +257,8 @@ void MCP2515_Init(unsigned char *CAN_Bitrate)
 * 输出    : 无
 * 返回值  : 无
 * 说明    :
+* 改进点   ：在报文发送之前， MCU 应对CANINTE.TXInE 位进行初始化，以便在报文发送时使能或禁止中断的产生
+ *          在写入发送缓冲器之前，必须将TXBnCTRL.TXREQ 位清零（表明发送缓冲器无等待发送的报文）。
 *******************************************************************************/
 void CAN_Send_buffer(unsigned long int ID,unsigned char EXIDE,unsigned char DLC,unsigned char *Send_data)
 {

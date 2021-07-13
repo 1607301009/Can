@@ -123,7 +123,7 @@ void MemToStr(unsigned char *str, unsigned char *src, unsigned char len) {
 
 /* 将一段内存数据转换为十六进制字符串，参数 str 是字符串指针，参数 src 是源数据地址，参数 len 是数据长度 */
 unsigned char *StrData(unsigned char *src, unsigned char len) {
-    static char str[23];      //必须为static变量，或者是全局变量
+    static char str[41];      //必须为static变量，或者是全局变量 读数据时最多有14位，14*3-1
     unsigned char i=0;
     unsigned char tmp;
     while (len--) {
@@ -189,7 +189,7 @@ unsigned char DLCNote[5]    = " DLC:";
 unsigned char DataNote[6]   = " Data:";
 
 unsigned char ReceiveNote[9] = "Receive: ";
-unsigned char Addr[6]    = " Addr:";
+unsigned char RXBNote[5] = "RXB: ";
 unsigned char Enter[2]      = "\r\n";
 
 unsigned char *StrID;
@@ -220,37 +220,36 @@ void Send(unsigned int ID, unsigned char EXIDE, unsigned char DLC, unsigned char
 
 /* 将需要发送的数据 转发到uart */
 void Receive(unsigned char RXB_CTRL_Address,unsigned char *CAN_RX_Buf) {
+    unsigned char i;
+    unsigned char Receive_DLC=0;
+    unsigned char Receive_data[8] = {0};
+
     CAN_Receive_Buffer(RXB_CTRL_Address, CAN_RX_Buf);//CAN接收一帧数据
     UART_send_buffer(ReceiveNote, sizeof(ReceiveNote));
 
-    UART_send_buffer(Addr, sizeof(Addr));
-    StrID = NumToStr(RXB_CTRL_Address, 16);
+    Receive_DLC = CAN_RX_Buf[5]&0x0F; //获取接收到的数据长度
+
+    for (i = 0; i < Receive_DLC; i++) //获取接收到的数据
+    {
+        Receive_data[i] = CAN_RX_Buf[6+i];
+    }
+
+    UART_send_buffer(DLCNote, sizeof(DLCNote));     //UART发送数据长度 DLC:
+    StrID = NumToStr(Receive_DLC, 16);
     UART_send_buffer(StrID, StrLen(StrID));
 
-    UART_send_buffer(DataNote, sizeof(DataNote));
-    SendData = StrData(CAN_RX_Buf, 8);
+    UART_send_buffer(DataNote, sizeof(DataNote));   //UART发送数据  Data:
+    SendData = StrData(Receive_data, Receive_DLC);
+    UART_send_buffer(SendData, StrLen(SendData));
+
+    UART_send_buffer(Enter, sizeof(Enter));         //UART发送 \n
+
+    UART_send_buffer(RXBNote, StrLen(RXBNote));     //UART发送全部寄存器数据 RXB:
+    SendData = StrData(CAN_RX_Buf, 14);
     UART_send_buffer(SendData, StrLen(SendData));
 
     UART_send_buffer(Enter, sizeof(Enter));
-
-//    ReadCtrl(RXB0CTRL);
 }
-//
-//unsigned char  ReadCtrl(unsigned char RXB0CTRL) {
-//    unsigned char rByte;
-//    rByte = MCP2515_ReadByte(RXB0CTRL);
-//
-//    UART_send_buffer(Addr, sizeof(Addr));
-//    StrID = NumToStr(RXB0CTRL, 16);
-//    UART_send_buffer(StrID, StrLen(StrID));
-//
-//    UART_send_buffer(DataNote, sizeof(DataNote));
-//    SendData = NumToStr(rByte, 16);
-//    UART_send_buffer(SendData, StrLen(SendData));
-//
-//    UART_send_buffer(Enter, sizeof(Enter));
-//    return rByte;
-//}
 
 /*******************************************************************************
 * 函数名  : main
@@ -261,7 +260,7 @@ void Receive(unsigned char RXB_CTRL_Address,unsigned char *CAN_RX_Buf) {
 * 说明    : 无
 *******************************************************************************/
 //unsigned char TXB_Value[]={0x0,0x1,0x2,0x3,0x04,0x05,0x06,0x27,0x08,0x09,0x10,0x11,0x12,0x13};
-unsigned char RXB_Value[] = {0x0, 0x1, 0x2, 0x3, 0x04, 0x05, 0x06, 0x27};
+unsigned char RXB_Value[14] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
 
 unsigned char Read_Value[] = {0x0, 0x1, 0x2, 0x3, 0x04, 0x05, 0x06, 0x27};
 
