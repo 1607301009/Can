@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   I2C                                                               06/29/2021 01:09:20 PAGE 1   
+C51 COMPILER V9.60.0.0   I2C                                                               08/30/2021 00:38:41 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE I2C
@@ -62,7 +62,7 @@ line level    source
   52   1        ack = I2C_SDA;      // 读取此时 SDA 的值，即从设备响应值
   53   1        I2CDelay();
   54   1        I2C_SCL = 0;        // 再次拉低 SCL 完成响应
-C51 COMPILER V9.60.0.0   I2C                                                               06/29/2021 01:09:20 PAGE 2   
+C51 COMPILER V9.60.0.0   I2C                                                               08/30/2021 00:38:41 PAGE 2   
 
   55   1      
   56   1        return (~ack);      // 应答值取反以符合日常逻辑，0 表示不存在/忙/写入失败，1 表
@@ -126,7 +126,7 @@ line level    source
  113   1        I2CDelay();
  114   1        I2C_SCL = 0;        // 拉低 SCL 完成应答位
  115   1      
-C51 COMPILER V9.60.0.0   I2C                                                               06/29/2021 01:09:20 PAGE 3   
+C51 COMPILER V9.60.0.0   I2C                                                               08/30/2021 00:38:41 PAGE 3   
 
  116   1        return dat;
  117   1      }

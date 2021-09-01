@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              07/11/2021 17:54:36 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/24/2021 00:12:12 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   53          * 描述    : 外部中断1初始化函数
   54          * 输入    : 无
   55          * 输出    : 无
-C51 COMPILER V9.60.0.0   MAIN                                                              07/11/2021 17:54:36 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/24/2021 00:12:12 PAGE 2   
 
   56          * 返回值  : 无
   57          * 说明    : 无
@@ -126,7 +126,7 @@ line level    source
  114   2      
  115   2              tmp = *src & 0x0F;         // 取出低 4 位
  116   2              if (tmp <= 9)              // 转换为 0-9 或 A-F
-C51 COMPILER V9.60.0.0   MAIN                                                              07/11/2021 17:54:36 PAGE 3   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/24/2021 00:12:12 PAGE 3   
 
  117   2                  *str++ = tmp + '0';
  118   2              else
@@ -190,7 +190,7 @@ line level    source
  175   1          unsigned long int ID = 0x7FD;
  176   1          unsigned char EXIDE = 0;
  177   1      //  unsigned char DLC=8;
-C51 COMPILER V9.60.0.0   MAIN                                                              07/11/2021 17:54:36 PAGE 4   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/24/2021 00:12:12 PAGE 4   
 
  178   1          unsigned char Send_data[] = {0x20, 0xF1, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
  179   1      //    unsigned char zifuchuan1[] = " aaaB22ss21d";
@@ -254,7 +254,7 @@ line level    source
  237   1      
  238   1      }
 *** WARNING C290 IN LINE 125 OF main.c: missing return value
-C51 COMPILER V9.60.0.0   MAIN                                                              07/11/2021 17:54:36 PAGE 5   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/24/2021 00:12:12 PAGE 5   
 
 
 

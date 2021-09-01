@@ -65,10 +65,11 @@ unsigned char init[1]={0x00};
 
 void main() {
     unsigned char i, j, k;
-    unsigned char buf[8];
-    unsigned char str[20];
+    unsigned char buf[16];
+    unsigned char str[47];
     unsigned long sec = 22; // 消耗的秒数
-    unsigned char NoteID[11] = "Note ID:";
+    unsigned char Read_E2[11] = "Read_E2: ";
+    unsigned char Enter[2] = "\r\n";
 
     TMOD = 0x01;            // 设置 T0 为模式 1
     TH0 = 0xFC;
@@ -78,46 +79,20 @@ void main() {
     ET0 = 1; // 使能 T0 中断
     TR0 = 1; // 启动 T0
     UART_init();    //UART1初始化配置
-//    while (1) {
-//        /* 判断 1 秒定时标志 */
-//        if (flag == 1) {
-//            flag = 0; // 定时 1 秒标志清零
-//            sec++;    // 秒计数自增 1
-//
-//            setDisplayNum(sec, 10);
-//        }
-//    }
 
-    UART_send_buffer(NoteID, sizeof(NoteID)); //发送一个字符
-    //for (k = 0; k < 256; k++) {
-			//E2Write(init, k, 1);
-		//}
-    for (k = 0; k < 256; ) {
-        k += 32;
-        j = k;
-        NumAddStr(NoteID, k);
-        delay(200);
-        UART_send_buffer(NoteID, sizeof(NoteID)); //发送一个字符
+    E2Read(buf, 0x00, sizeof(buf));  // 从 EEPROM 读取一段数据
+        
+    UART_send_buffer(Read_E2, sizeof(Read_E2)); //发送一个字符
+    MemToStr(str, buf, sizeof(buf)); // 转换为十六进制字符串
+    UART_send_buffer(str, sizeof(str)); //发送一个字符
+    UART_send_buffer(Enter, sizeof(Enter)); //发送一个字符
 
-        E2Read(buf, j, sizeof(buf));  // 从 EEPROM 读取一段数据
-        MemToStr(str, buf, sizeof(buf)); // 转换为十六进制字符串
-
-//        /* 数据依次累加 1, 2, 3... */
-//        for (i = 0; i < sizeof(Send_data); i++) {
-//            Send_data[i] = j + i;
-//        }
-//
-////    *NoteID += k;
-        delay(200);
-//        flag = 0; // 定时 1 秒标志清零
-//        //sec++;    // 秒计数自增 1
-        UART_send_buffer(str, sizeof(str)); //发送一个字符
-//        setDisplayNum(k, 10);
-////    UART_send_buffer(str, sizeof(buf)); //发送一个字符
-//
-//        E2Write(Send_data, j, sizeof(Send_data)); // 将结果写回 EEPROM
-//        E2Write(buf, j, sizeof(buf)); // 将结果写回 EEPROM
+    /* 数据依次累加 1, 2, 3... */
+    for (i = 0; i < sizeof(buf); i++) {
+        buf[i] = buf[i] + 1 + i;
     }
+    E2Write(buf, 0x00, sizeof(buf)); // 将结果写回 EEPROM
+       
     while (1);
 }
 
