@@ -1,6 +1,6 @@
 /** 用 连续读 和 分页写 模式访问 EEPROM，并且依次加 1 加 2 加 3...最后将结果回写至原地址，此处省略 Lcd1602.c 和 I2C.c */
 #include <reg52.h>
-
+#include <stdio.h>
 extern void E2Read(unsigned char *buf, unsigned char addr, unsigned char len);
 
 extern void E2Write(unsigned char *buf, unsigned char addr, unsigned char len);
@@ -10,7 +10,8 @@ void MemToStr(unsigned char *str, unsigned char *src, unsigned char len);
 //声明函数
 extern void UART_init(void);
 
-extern void UART_send_buffer(unsigned char *buffer, unsigned int len);
+extern void UART_send_buffer(unsigned char *buffer);
+extern void UART_send_str(unsigned char d);
 
 extern void setDisplayNum(unsigned long Num, unsigned long base);
 
@@ -62,9 +63,15 @@ void delay(unsigned char i) {
 unsigned char Send_data[8]={0x20,0xF1,0x02,0x03,0x04,0x05,0x06,0x07};
 unsigned char init[1]={0x00};
 
+char putchar(char c)  //printf函数会调用putchar()
+{
+    UART_send_str(c);
+		return c;
+}
+
 
 void main() {
-    unsigned char i, j, k;
+    unsigned char i;
     unsigned char buf[16];
     unsigned char str[47];
     unsigned long sec = 22; // 消耗的秒数
@@ -82,10 +89,14 @@ void main() {
 
     E2Read(buf, 0x00, sizeof(buf));  // 从 EEPROM 读取一段数据
         
-    UART_send_buffer(Read_E2, sizeof(Read_E2)); //发送一个字符
+//    UART_send_buffer(Read_E2); //发送一个字符
     MemToStr(str, buf, sizeof(buf)); // 转换为十六进制字符串
-    UART_send_buffer(str, sizeof(str)); //发送一个字符
-    UART_send_buffer(Enter, sizeof(Enter)); //发送一个字符
+//    UART_send_buffer(str); //发送一个字符
+//    UART_send_buffer(Enter); //发送一个字符
+		
+//		UART_send_buffer("4312ABCDEFG: %s\r\n"); //发送一个字符
+
+		printf("Read E2ROM: %s, len=%d", str, sizeof(str));
 
     /* 数据依次累加 1, 2, 3... */
     for (i = 0; i < sizeof(buf); i++) {

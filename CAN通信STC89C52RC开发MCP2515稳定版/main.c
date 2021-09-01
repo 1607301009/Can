@@ -131,6 +131,7 @@ unsigned char NoteID[] = " ID:";
 unsigned char NoteData[] = " Data:";
 unsigned char Enter[] = "\r\n";
 
+
 void Send(unsigned int ID, unsigned char EXIDE, unsigned char DLC, unsigned char *Send_data) {
 
 //    UART_send_buffer(Enter, sizeof(Enter));

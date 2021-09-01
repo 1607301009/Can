@@ -24,6 +24,7 @@ void UART_init(void)		//串口初始化
  TH1=256-FOSC/(BAUD*12*16); //计算定时器重装值
  TL1=256-FOSC/(BAUD*12*16);
  PCON|=0x80;    			//串口波特率加倍
+			TI = 1;
  ES=1;         				//串行中断允许
  TR1=1;        				//启动定时器1
  REN=1;        				//允许接收 
@@ -74,11 +75,10 @@ void UART_send_str(unsigned char d)		  //发送一个字节的数据，形参d即为待发送数据
 * 返回值  : 无
 * 说明    : 无
 *******************************************************************************/
-void UART_send_buffer(unsigned char *buffer,unsigned int len)
+void UART_send_buffer(unsigned char *buffer)
 {
- for(j=len;j>0;j--) //发送字符串，直到遇到0才结束
- {
-  UART_send_str(*buffer); //发送一个字符
-  buffer++;  //移动到下一个字符
- }
+    do
+    {
+        UART_send_str(*buffer); //发送一个字符
+    }while(*buffer++!='\0');
 }
